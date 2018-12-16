@@ -1,0 +1,95 @@
+
+
+
+Process
+
+1.	Write a program that fork once. Find out what happens when fork returns? Also find out what the parent gets as the return value of the fork and what the child gets as the return value of the same call.
+
+2.	Write a program that, forks to create a child process. The child exits with an exit status of 10 and the parent waits for the death of the child. Display the PID & PPID of both processes and let the parent display the child's exit status. (Use fork, exit, wait)
+
+3.	Create two executables (“PGM1”, “PGM2”) from two different C source code files: PGM1.c and PGM2.c. These programs should behave as follows:  
+a)	The program “PGM1” should have 4 different versions to do the following:
+a.	Call fork() and Call exec(“PGM2”) after fork in the child process 
+b.	Call exec(“PGM2”) before fork()
+c.	Call exec(“PGM2”) after fork() without checking for return value
+d.	Call exec(“PGM2”) after fork() in the parent process
+b)	It does not matter what program PGM2 does, it can have any set of statements
+
+4.	Write a program that uses an “exec()” system call to execute a program given to it through command line.  For example if the name of your executable is “myexecutable” then if you invoke as follows: “myexecutable mycmd a b” then “mycmd” will be executed with command line parameters “a” & “b” by the program “myexecutable” (Note: “mycmd” may be any standard unix program or a program created by you)
+
+5.	Write a program similar to Shell, which takes the input from the user in the same format as a Shell program and which is capable of running any one of a set of five or more programs written by you, based on the input given by the user. It should be able to run standard unix utilities like “ls” also.
+
+6.	Write the program below. Can you explain the output? Now write it without the commented code. Is there any difference in the output?
+
+#include<sys/types.h>
+#include<sys/wait.h>
+#include<stdio.h>
+main()
+{
+pid_t pid,i;
+int status;
+if((pid=fork())==0)
+{
+if((pid=fork())>0)
+exit(10);
+//sleep(2);
+        		printf("Second Child, parent Id =%d\n",getppid());
+exit(0);
+}
+i=wait(&status);
+printf("My Child with pid %d exited with status %d\n",i,WEXITSTATUS(status));
+}
+
+
+7.	Run the following program in background(./a.out&)
+
+#include<sys/types.h>
+#include<stdio.h>
+#include<sys/wait.h>
+#define MAX_LOOP_INDEX 15
+main()
+{
+int index;
+for(index=0; index<MAX_LOOP_INDEX; index++)
+{
+if(fork()==0)
+{
+			printf("Child Process %d\n",getpid());
+			exit(index);
+}
+}
+//sleep(10);
+printf("PARENT EXITING WITH PROCESS ID =%d",getpid());
+}
+	
+What is the output of “ps” command? 
+Now run the code in the background but Remove the commented sleep call. Now check the output of ps command .Explain the output .
+
+8.	Study the vfork system call, code the program below and explain the output. What is the difference between fork and vfork
+
+#include<sys/types.h>
+int globalvar=6;
+main()
+{
+        int localvar;
+        pid_t pid;
+        localvar=88;
+        printf("BEFORE VFORK\n");
+        if((pid=vfork())<0)
+        {
+                printf("ERROR IN VFORK\n");
+                exit(0);
+        }
+        else if (pid==0)
+        {
+                globalvar++;
+                localvar++;
+                _exit(0);
+        }
+        printf("Parent process id = %d, global variable=%d, local variable=%d\n", getpid(), globalvar, localvar);
+}
+
+
+
+
+
